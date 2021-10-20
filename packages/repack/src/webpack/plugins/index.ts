@@ -5,3 +5,4 @@ export * from './JavaScriptLooseModePlugin';
 export * from './LoggerPlugin';
 export * from './OutputPlugin';
 export * from './AssetsResolverPlugin';
+export * from './HermesBytecodePlugin';

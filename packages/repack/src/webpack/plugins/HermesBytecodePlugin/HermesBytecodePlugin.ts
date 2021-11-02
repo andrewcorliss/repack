@@ -1,12 +1,11 @@
 import path from 'path';
-import * as child from 'child_process';
+import { exec } from 'child_process';
 import webpack from 'webpack';
-// import { CLI_OPTIONS_ENV_KEY } from '../../../env';
 import { Rule, WebpackPlugin } from '../../../types';
 
 const HERMES_BYTE_CODE_CLI = '-emit-binary -out';
 const HERMES_OUTPUT_DIR = (output: string, filename: string) =>
-  `./${output}hbc/${filename}.hbc`;
+  `${output}/${filename}.hbc`;
 
 export interface HermesBytecodePluginConfig {
   devServerEnabled?: boolean;
@@ -23,6 +22,8 @@ export class HermesBytecodePlugin implements WebpackPlugin {
   }
 
   apply(compiler: webpack.Compiler) {
+    const logger = compiler.getInfrastructureLogger('HermesByteCodeCompiler');
+
     const shouldUseHermesByteCode = (filename: string) =>
       webpack.ModuleFilenameHelpers.matchObject(this.config, filename);
 
@@ -38,29 +39,29 @@ export class HermesBytecodePlugin implements WebpackPlugin {
       'HermesBytecodeCompiler',
       (compilation: webpack.Compilation) => {
         const assetsInCompilation = compilation.getAssets();
+        const outputDir = compilation.outputOptions.path?.toString();
 
         assetsInCompilation.forEach((asset: any) => {
           if (!shouldUseHermesByteCode(asset.name)) {
             return;
           }
-
           const assetPath = compilation.getPath(asset.name);
+          logger.info(`CREATE BUNDLE ::: ${asset.name}`);
+          const cmd = `${hermesRunCmd} ${HERMES_OUTPUT_DIR(
+            outputMainFilePath,
+            assetPath
+          )} ${outputDir}/${assetPath} -output-source-map`;
 
-          child.exec('mkdir ./dist/hbc');
-
-          child.exec(
-            `${hermesRunCmd} ${HERMES_OUTPUT_DIR(
-              outputMainFilePath,
-              assetPath
-            )} ./build/ios/${assetPath}`,
-            {},
-            (error) => {
-              if (error) {
-                console.log(`ERROR :: :: ${assetPath} ::: ${error}`);
-              }
+          exec(`mkdir ${outputMainFilePath}`);
+          exec(cmd, (error) => {
+            if (error) {
+              logger.info(`ERROR ::: ${assetPath} ::: ${error}`);
             }
-          );
+            return;
+          });
+          return;
         });
+        return;
       }
     );
   }

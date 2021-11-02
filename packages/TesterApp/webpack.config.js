@@ -308,7 +308,6 @@ module.exports = {
         // file: path.join(__dirname, '${build}.${platform}.log`),
       },
     }),
-
     new ReactNative.HermesBytecodePlugin({
       test: /\.(js)?bundle$/,
       include: /\.chunk\.(js)?bundle$/,

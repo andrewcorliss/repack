@@ -1,1 +1,1 @@
-export * from './HermesBytecodePlugin'
+export * from './HermesBytecodePlugin';

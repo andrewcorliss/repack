@@ -27,7 +27,7 @@ export class HermesBytecodePlugin implements WebpackPlugin {
     const shouldUseHermesByteCode = (filename: string) =>
       webpack.ModuleFilenameHelpers.matchObject(this.config, filename);
 
-    const hermesRunCmd = `${this.config.hermesCLIPath}osx-bin/hermesc ${HERMES_BYTE_CODE_CLI}`;
+    const hermesRunCmd = `${this.config.hermesCLIPath} ${HERMES_BYTE_CODE_CLI}`;
     const workingCmd = JSON.parse(process.env.RNWT_CLI_OPTIONS as string);
 
     const outputMainFilePath = path.join(

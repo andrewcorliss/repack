@@ -5,3 +5,4 @@ export * from './getMode';
 export * from './getEntry';
 export * from './isMinimizeEnabled';
 export * from './getDevServerOptions';
+export * from './getHermesCLIPath';

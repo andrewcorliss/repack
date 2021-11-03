@@ -9,6 +9,7 @@ export function MiniAppsContainer() {
 
   const install = useCallback(async () => {
     const bundle = await import(/* webpackChunkName: "miniapp" */ './MiniApp');
+    alert('BUNDLE :: ', bundle);
     miniAppContent.current = bundle.default;
     setIsInstalled(true);
   }, []);

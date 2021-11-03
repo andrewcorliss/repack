@@ -39,6 +39,7 @@ const platform = ReactNative.getPlatform({ fallback: process.env.PLATFORM });
 const minimize = ReactNative.isMinimizeEnabled({ fallback: !dev });
 const devServer = ReactNative.getDevServerOptions();
 const reactNativePath = ReactNative.getReactNativePath();
+const hermesCLI = ReactNative.getHermesCLIPath(__dirname);
 
 /**
  * Depending on your Babel configuration you might want to keep it.
@@ -68,7 +69,7 @@ module.exports = {
    */
   entry: [
     ...ReactNative.getInitializationEntries(reactNativePath, {
-      hmr: devServer.hmr,
+      hmr: true,
     }),
     entry,
   ],
@@ -311,7 +312,7 @@ module.exports = {
     new ReactNative.HermesBytecodePlugin({
       test: /\.(js)?bundle$/,
       include: /\.chunk\.(js)?bundle$/,
-      hermesCLIPath: './node_modules/hermes-engine/',
+      hermesCLIPath: hermesCLI,
       platform: platform,
     }),
   ],

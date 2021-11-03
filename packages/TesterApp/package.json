@@ -17,7 +17,7 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native webpack-start",
-    "bundle": "react-native webpack-bundle --platform android --entry-file index.js --bundle-output ./dist/index.android.bundle --dev=false",
+    "bundle": "react-native webpack-bundle --platform=ios --entry-file index.js --bundle-output ./dist/index.ios.bundle --dev=false",
     "webpack": "PLATFORM=android webpack -c webpack.config.js"
   },
   "dependencies": {

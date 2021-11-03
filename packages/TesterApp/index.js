@@ -7,6 +7,7 @@ import { name as appName } from './app.json';
 ChunkManager.configure({
   storage: AsyncStorage,
   resolveRemoteChunk: async (chunkId) => {
+    alert('CHUNK : ', chunkId.toString());
     return {
       url: `http://localhost:5000/${chunkId}`,
     };

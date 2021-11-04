@@ -39,7 +39,6 @@ const platform = ReactNative.getPlatform({ fallback: process.env.PLATFORM });
 const minimize = ReactNative.isMinimizeEnabled({ fallback: !dev });
 const devServer = ReactNative.getDevServerOptions();
 const reactNativePath = ReactNative.getReactNativePath();
-const hermesCLI = ReactNative.getHermesCLIPath(__dirname);
 
 /**
  * Depending on your Babel configuration you might want to keep it.
@@ -312,8 +311,11 @@ module.exports = {
     new ReactNative.HermesBytecodePlugin({
       test: /\.(js)?bundle$/,
       include: /\.chunk\.(js)?bundle$/,
-      hermesCLIPath: hermesCLI,
-      platform: platform,
+      /**
+       * Can override hermesCLI path with your own if necessary
+       * Otherwise will use base project path to find node_modules and use
+       * hermesCLIPath: hermesCLI,
+       */
     }),
   ],
 };

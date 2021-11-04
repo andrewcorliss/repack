@@ -20,9 +20,9 @@ const getHermesOSBin = () => {
   }
 };
 
-const getHermesCLIPath = () => {
+const getHermesCLIPath = (root: string) => {
   const osBin = getHermesOSBin();
-  return `./node_modules/hermes-engine/${osBin}/hermesc`;
+  return `${root}/node_modules/hermes-engine/${osBin}/hermesc`;
 };
 
 export interface HermesBytecodePluginConfig {
@@ -31,18 +31,27 @@ export interface HermesBytecodePluginConfig {
   include?: Rule | Rule[];
   exclude?: Rule | Rule[];
   hermesCLIPath?: string;
+  root: string;
 }
 
 export class HermesBytecodePlugin implements WebpackPlugin {
-  config: HermesBytecodePluginConfig = {};
+  config: HermesBytecodePluginConfig = {
+    root: path.join(__dirname, '../../../../../'),
+  };
 
-  constructor({ hermesCLIPath = getHermesCLIPath(), ...config } = {}) {
-    this.config = { ...this.config, hermesCLIPath, ...config };
+  constructor(
+    { root, ...config }: HermesBytecodePluginConfig = {
+      root: path.join(__dirname, '../../../../../'),
+    }
+  ) {
+    this.config = { ...this.config, root, ...config };
+    this.config.root = root;
+    this.config.hermesCLIPath = getHermesCLIPath(this.config.root);
   }
 
   apply(compiler: webpack.Compiler) {
     const logger = compiler.getInfrastructureLogger('HermesByteCodeCompiler');
-
+    logger.info(this.config.root);
     const shouldUseHermesByteCode = (filename: string) =>
       webpack.ModuleFilenameHelpers.matchObject(this.config, filename);
 
@@ -94,21 +103,26 @@ export class HermesBytecodePlugin implements WebpackPlugin {
               ].join(' '),
               (error) => {
                 if (error) {
-                  return logger.info(`ERROR ::: ${assetPath} ::: ${error}`);
+                  return logger.info(
+                    `ERROR HERMES BYTE COMPILE ::: ${assetPath} ::: ${error}`
+                  );
                 }
                 fs.unlinkSync(bundleOutputPath);
                 fs.renameSync(hermesBundlePath, bundleOutputPath);
                 exec(
                   [
                     'node',
-                    '/node_modules/react-native/scripts/compose-source-maps.js',
+                    path.join(
+                      this.config.root,
+                      '/node_modules/react-native/scripts/compose-source-maps.js'
+                    ),
                     packagerMapPath,
                     hermesMapPath,
                     `-o ${sourcemapOutputPath}`,
                   ].join(' '),
                   (error) => {
                     if (error) {
-                      return logger.info(`ERROR ::: ${error}`);
+                      return logger.info(`ERROR HERMES SOURCEMAP ::: ${error}`);
                     }
                     fs.unlinkSync(hermesMapPath);
                     fs.unlinkSync(packagerMapPath);

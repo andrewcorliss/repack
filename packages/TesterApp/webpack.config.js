@@ -311,6 +311,7 @@ module.exports = {
     new ReactNative.HermesBytecodePlugin({
       test: /\.(js)?bundle$/,
       include: /\.chunk\.(js)?bundle$/,
+      root: path.join(__dirname),
       /**
        * Can override hermesCLI path with your own if necessary
        * Otherwise will use base project path to find node_modules and use
